@@ -1,0 +1,54 @@
+version: '3.2'
+services:
+  httpd:
+    build: 
+      context: ./httpd
+    image: httpd
+    links:
+      - server-john
+      - server-paul
+      - server-george
+      - server-ringo
+    ports:
+     - "3000:8000"
+
+  server-john:
+    build: ./server
+    links:
+      - redis
+    expose:
+      - "3000"
+    environment:
+      - NAME=John
+
+  server-paul:
+    build: ./server
+    links:
+      - redis
+    expose:
+      - "3000"
+    environment:
+      - NAME=Paul
+
+  server-george:
+    build: ./server
+    links:
+      - redis
+    expose:
+      - "3000"
+    environment:
+      - NAME=George
+
+  server-ringo:
+    build: ./server
+    links:
+      - redis
+    expose:
+      - "3000"
+    environment:
+      - NAME=Ringo
+
+  redis:
+    image: redis:latest
+    expose:
+      - "6379"

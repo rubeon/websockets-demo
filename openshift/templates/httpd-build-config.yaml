@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: httpd-build-config
+  annotations:
+    description: Build Config template for HTTP, which only has like a 5 line dockerfile
+labels:
+  name: httpd-build-config
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: httpd
+    labels:
+      app: socketman
+  spec:
+    tags:
+      - name: latest
+        annotations:
+          # openshift.io/imported-from: registry.access.redhat.com/rhel7/rhel
+        from:
+          kind: DockerImage
+          name: httpd
+        referencePolicy:
+          type: Source
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: httpd
+    labels:
+      app: socketman
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: httpd-build-config
+    labels:
+      app: socketman
+  spec:
+    runPolicy: Serial
+    source:
+      type: Git
+      git:
+        uri: https://github.com/socketio/socket.io/tree/master/examples/cluster-httpd/httpd
+    strategy:
+      type: Docker
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'httpd'
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'httpd:latest'

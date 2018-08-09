@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: httpd-build-config
+  labels:
+    app: socketman
+spec:
+  runPolicy: Serial
+  source:
+    type: Git
+    git:
+      uri: https://github.com/socketio/socket.io.git
+    contextDir: 'examples/cluster-httpd/httpd/'
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'httpd-upstream:latest'
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'http-socketman:latest'
+      
+
+
